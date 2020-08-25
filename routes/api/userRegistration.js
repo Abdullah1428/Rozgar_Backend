@@ -78,12 +78,12 @@ router.post(
           };
 
           let sql2 = `INSERT INTO customer SET ?`;
-          let query2 = db.query(sql2, data, (err, result) => {
+          db.query(sql2, data, (err, result) => {
             if (err) {
-              return res.status(400).send("Error in query for registration");
+              return res.status(400).send("User already exists");
             }
             if (result.length === 0) {
-              return res.status(400).send("Error in query for registration");
+              return res.status(400).send("User already exists");
             } else {
               //console.log(result);
 
@@ -94,7 +94,7 @@ router.post(
 
               const accessToken = jwtService.getAccessToken(payload);
 
-              const status = 201;
+              const status = 201; // created a user successfully
 
               res.send({
                 accessToken,
@@ -104,7 +104,9 @@ router.post(
             }
           });
         } else {
-          return res.status(400).send("User does Exists");
+          return res
+            .status(400)
+            .json({ errors: [{ msg: "User already exists" }] });
         }
       });
     } catch (err) {
