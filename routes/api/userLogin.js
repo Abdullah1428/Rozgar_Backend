@@ -20,7 +20,6 @@ router.post(
     check("password", "password is required").exists()
   ],
   async (req, res) => {
-
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
@@ -33,7 +32,7 @@ router.post(
       let sql = `SELECT * from customer WHERE phone_no = ${phonenumber}`;
       db.query(sql, (err, results) => {
         if (err) {
-          return res.status(400).send("Error in query");
+          return res.status(400).json({ errors: [{ msg: "Server error" }] });
         }
         if (results.length === 0) {
           return res
@@ -45,9 +44,10 @@ router.post(
             if (result) {
               // returning json web token
               const payload = {
-                id: results[0].id,
-                phonenumber: results[0].phone_no,
-                name: results[0].name
+                user: {
+                  phonenumber: results[0].phone_no,
+                  name: results[0].name
+                }
               };
               /*
               const USER = {
@@ -75,7 +75,7 @@ router.post(
         }
       });
     } catch (err) {
-      res.status(500).send("Server error");
+      return res.status(400).json({ errors: [{ msg: "Server error" }] });
     }
   }
 );

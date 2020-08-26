@@ -18,6 +18,7 @@ app.get("/", (req, res) => res.send("API running"));
 app.use("/api/userRegistration", require("./routes/api/userRegistration"));
 app.use("/api/userLogin", require("./routes/api/userLogin"));
 app.use("/api/auth", require("./routes/api/auth"));
+app.use("/api/userLocation", require("./routes/api/userLocation"));
 
 const PORT = process.env.PORT || 5000;
 const hostname = "192.168.43.100";

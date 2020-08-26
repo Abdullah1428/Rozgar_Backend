@@ -59,9 +59,9 @@ router.post(
     try {
       // check if the user already exists
       let sql = `SELECT * FROM customer WHERE phone_no = ${phonenumber}`;
-      let query = db.query(sql, (err, result) => {
+      db.query(sql, (err, result) => {
         if (err) {
-          return res.status(400).send("Error in query");
+          return res.status(400).json({ errors: [{ msg: "Server error" }] });
         }
         if (result.length === 0) {
           // user does not exists so here we will continue our registration for user
@@ -80,16 +80,22 @@ router.post(
           let sql2 = `INSERT INTO customer SET ?`;
           db.query(sql2, data, (err, result) => {
             if (err) {
-              return res.status(400).send("User already exists");
+              return res
+                .status(400)
+                .json({ errors: [{ msg: "Server error" }] });
             }
             if (result.length === 0) {
-              return res.status(400).send("User already exists");
+              return res
+                .status(400)
+                .json({ errors: [{ msg: "Server error" }] });
             } else {
               //console.log(result);
 
               const payload = {
-                phonenumber: phonenumber,
-                name: name
+                user: {
+                  phonenumber: phonenumber,
+                  name: name
+                }
               };
 
               const accessToken = jwtService.getAccessToken(payload);
@@ -110,7 +116,7 @@ router.post(
         }
       });
     } catch (err) {
-      res.status(500).send("Server error");
+      return res.status(400).json({ errors: [{ msg: "Server error" }] });
     }
   }
 );
